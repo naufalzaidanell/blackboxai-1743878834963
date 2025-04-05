@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Pesanan - KLORIVA CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .order-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-left-color: #2c5e1a;
+        }
+        .status-completed {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        .tab-button {
+            transition: all 0.2s;
+        }
+        .tab-button.active {
+            border-bottom: 2px solid #2c5e1a;
+            color: #2c5e1a;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-4">
+            <div class="flex items-center space-x-2 mb-8">
+                <i class="fas fa-utensils text-2xl"></i>
+                <h1 class="text-xl font-bold">KLORIVA CRM</h1>
+            </div>
+            <nav>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="dashboard.html" class="flex items-center space-x-2 p-2 rounded hover:bg-green-700">
+                            <i class="fas fa-home w-5"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="profilsaya.html" class="flex items-center space-x-2 p-2 rounded hover:bg-green-700">
+                            <i class="fas fa-user w-5"></i>
+                            <span>Profil Saya</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="riwayatpesanan.html" class="flex items-center space-x-2 p-2 rounded bg-green-700">
+                            <i class="fas fa-history w-5"></i>
+                            <span>Riwayat Pesanan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="programloyality.html" class="flex items-center space-x-2 p-2 rounded hover:bg-green-700">
+                            <i class="fas fa-star w-5"></i>
+                            <span>Program Loyalty</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="ulasan.html" class="flex items-center space-x-2 p-2 rounded hover:bg-green-700">
+                            <i class="fas fa-comment w-5"></i>
+                            <span>Ulasan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button id="logoutBtn" class="w-full flex items-center space-x-2 p-2 rounded hover:bg-green-700 text-left">
+                            <i class="fas fa-sign-out-alt w-5"></i>
+                            <span>Keluar</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8 overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">Riwayat Pesanan</h2>
+                <div class="flex items-center space-x-2">
+                    <div class="relative">
+                        <input type="text" placeholder="Cari pesanan..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button class="btn-primary text-white py-2 px-4 rounded-md text-sm flex items-center">
+                        <i class="fas fa-filter mr-2"></i> Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Combined Search and Filter -->
+            <div class="mb-6">
+                <div class="relative max-w-md">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                    <input type="text" id="orderSearch" placeholder="Cari pesanan..." 
+                        class="pl-10 pr-24 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 w-full">
+                    <div class="absolute inset-y-0 right-0 flex items-center">
+                        <select id="statusFilter" class="h-full py-0 pl-2 pr-8 border-transparent bg-transparent text-gray-500 focus:ring-green-500 focus:border-green-500 rounded-md">
+                            <option value="all">Semua Status</option>
+                            <option value="completed">Selesai</option>
+                            <option value="pending">Diproses</option>
+                            <option value="cancelled">Dibatalkan</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Total Pesanan</p>
+                            <p class="text-2xl font-bold">24</p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-shopping-bag text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Belum Dibayar</p>
+                            <p class="text-2xl font-bold">3</p>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-exclamation-circle text-yellow-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Total Pengeluaran</p>
+                            <p class="text-2xl font-bold">Rp1.240.000</p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-wallet text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders List -->
+            <div class="space-y-4">
+                <!-- Order Card 1 -->
+                <div class="order-card bg-white p-6 rounded-lg shadow" data-status="completed">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-green-100 p-3 rounded-full">
+                                    <i class="fas fa-check text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">ORD-2023-0015</h3>
+                                    <p class="text-sm text-gray-500">15 Nov 2023 • 12:30 WIB</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 ml-16">
+                                <p class="font-medium">Nasi Goreng Special, Es Teh Manis, Kerupuk</p>
+                                <p class="text-gray-600">Catatan: Pedas level sedang</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium status-completed">Selesai</span>
+                            <p class="mt-2 text-lg font-bold">Rp65.000</p>
+                            <button class="mt-2 text-green-600 hover:text-green-800 text-sm font-medium">
+                                <i class="fas fa-redo mr-1"></i> Pesan Lagi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Card 2 -->
+                <div class="order-card bg-white p-6 rounded-lg shadow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-yellow-100 p-3 rounded-full">
+                                    <i class="fas fa-spinner text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">ORD-2023-0016</h3>
+                                    <p class="text-sm text-gray-500">16 Nov 2023 • 18:45 WIB</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 ml-16">
+                                <p class="font-medium">Ayam Bakar, Nasi Putih, Sayur Asem</p>
+                                <p class="text-gray-600">Catatan: Ayam bagian dada</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium status-pending">Diproses</span>
+                            <p class="mt-2 text-lg font-bold">Rp45.000</p>
+                            <button class="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <i class="fas fa-info-circle mr-1"></i> Detail
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Card 3 -->
+                <div class="order-card bg-white p-6 rounded-lg shadow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-red-100 p-3 rounded-full">
+                                    <i class="fas fa-times text-red-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">ORD-2023-0014</h3>
+                                    <p class="text-sm text-gray-500">14 Nov 2023 • 19:30 WIB</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 ml-16">
+                                <p class="font-medium">Mie Goreng Jawa, Es Jeruk</p>
+                                <p class="text-gray-600">Catatan: Dibatalkan oleh pelanggan</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium status-cancelled">Dibatalkan</span>
+                            <p class="mt-2 text-lg font-bold">Rp35.000</p>
+                            <button class="mt-2 text-green-600 hover:text-green-800 text-sm font-medium">
+                                <i class="fas fa-redo mr-1"></i> Pesan Lagi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Order Form -->
+            <div class="mt-8 bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-bold mb-4">Buat Pesanan Baru</h3>
+                <form id="newOrderForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Items</label>
+                        <div class="space-y-2" id="orderItems">
+                            <div class="flex space-x-2">
+                                <input type="text" class="flex-1 px-3 py-2 border rounded-md" placeholder="Nama item">
+                                <button type="button" class="px-3 py-2 bg-red-100 text-red-600 rounded-md" onclick="removeItem(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="mt-2 text-sm text-green-600" onclick="addItem()">
+                            <i class="fas fa-plus mr-1"></i> Tambah Item
+                        </button>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Harga</label>
+                        <input type="number" id="orderTotal" class="w-full px-3 py-2 border rounded-md" placeholder="Rp">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select id="orderStatus" class="w-full px-3 py-2 border rounded-md">
+                            <option value="completed">Selesai</option>
+                            <option value="pending">Diproses</option>
+                            <option value="cancelled">Dibatalkan</option>
+                        </select>
+                    </div>
+                    <div class="pt-2">
+                        <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md w-full">
+                            Buat Pesanan
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-between items-center mt-8">
+                <div class="text-sm text-gray-500">
+                    Menampilkan 1-3 dari 24 pesanan
+                </div>
+                <div class="flex space-x-2">
+                    <button class="px-3 py-1 border rounded-md text-sm disabled:opacity-50" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="px-3 py-1 border rounded-md text-sm bg-green-100 text-green-800">1</button>
+                    <button class="px-3 py-1 border rounded-md text-sm">2</button>
+                    <button class="px-3 py-1 border rounded-md text-sm">3</button>
+                    <button class="px-3 py-1 border rounded-md text-sm">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <script>
+                // Combined filter and search functionality
+                function filterOrders() {
+                    const status = document.getElementById('statusFilter').value;
+                    const searchTerm = document.getElementById('orderSearch').value.toLowerCase();
+                    
+                    document.querySelectorAll('.order-card').forEach(order => {
+                        const orderStatus = order.dataset.status;
+                        const orderText = order.textContent.toLowerCase();
+                        
+                        const statusMatch = status === 'all' || orderStatus === status;
+                        const searchMatch = searchTerm === '' || orderText.includes(searchTerm);
+                        
+                        order.style.display = statusMatch && searchMatch ? 'block' : 'none';
+                    });
+                }
+
+                // Initialize combined filter
+                document.getElementById('statusFilter').addEventListener('change', filterOrders);
+                document.getElementById('orderSearch').addEventListener('input', filterOrders);
+                filterOrders(); // Apply initial filter
+
+                // Add/remove order items
+                function addItem() {
+                    const container = document.getElementById('orderItems');
+                    const div = document.createElement('div');
+                    div.className = 'flex space-x-2';
+                    div.innerHTML = `
+                        <input type="text" class="flex-1 px-3 py-2 border rounded-md" placeholder="Nama item">
+                        <button type="button" class="px-3 py-2 bg-red-100 text-red-600 rounded-md" onclick="removeItem(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    container.appendChild(div);
+                }
+
+                function removeItem(button) {
+                    button.parentElement.remove();
+                }
+
+                // Handle form submission
+                document.getElementById('newOrderForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const items = Array.from(document.querySelectorAll('#orderItems input'))
+                        .map(input => input.value)
+                        .filter(Boolean);
+                    
+                    const total = document.getElementById('orderTotal').value;
+                    
+                    if (items.length === 0 || !total) {
+                        alert('Harap isi item dan total harga');
+                        return;
+                    }
+
+                    const newOrder = {
+                        id: 'ORD-' + Date.now(),
+                        date: new Date().toISOString(),
+                        items: items,
+                        total: parseInt(total),
+                        status: document.getElementById('orderStatus').value
+                    };
+
+                    // Save to current customer
+                    const customer = JSON.parse(localStorage.getItem('currentCustomer'));
+                    customer.orders.unshift(newOrder);
+                    localStorage.setItem('currentCustomer', JSON.stringify(customer));
+
+                    // Update customers list
+                    const customers = JSON.parse(localStorage.getItem('customers'));
+                    const customerIndex = customers.findIndex(c => c.id === customer.id);
+                    if (customerIndex !== -1) {
+                        customers[customerIndex] = customer;
+                        localStorage.setItem('customers', JSON.stringify(customers));
+                    }
+
+                    alert('Pesanan berhasil dibuat!');
+                    window.location.reload();
+                });
+            </script>
+        </div>
+    </div>
+
+    <!-- Load Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Load Animations -->
+    <script src="js/animations.js"></script>
+    
+    <script>
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab-button');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('currentCustomer');
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
