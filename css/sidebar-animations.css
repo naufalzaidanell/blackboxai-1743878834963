@@ -1,0 +1,58 @@
+/* Sidebar Animations for KLORIVA CRM */
+.sidebar {
+    transition: transform 0.3s ease;
+}
+
+.sidebar-nav {
+    transition: all 0.3s ease;
+}
+
+.sidebar a, 
+.sidebar button {
+    transition: all 0.3s ease;
+    transform-origin: left center;
+}
+
+.sidebar a:hover,
+.sidebar button:hover {
+    transform: translateX(5px);
+}
+
+.sidebar a.active {
+    background-color: #1e3d12;
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+.sidebar a.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: white;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(44, 94, 26, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(44, 94, 26, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(44, 94, 26, 0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Mobile Menu Animation */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
