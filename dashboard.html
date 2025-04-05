@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pelanggan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            background-color: #2c5e1a;
+        }
+
+        .btn-primary {
+            background-color: #2c5e1a;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e3d12;
+        }
+
+        /* Animasi sambutan */
+        .greeting-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            background: linear-gradient(90deg, #2c5e1a, #4a8c2a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            animation: wave 2s infinite, colorChange 5s infinite;
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes colorChange {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .name-text {
+            font-weight: 600;
+            color: #2c5e1a;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+
+        .wave-emoji {
+            display: inline-block;
+            animation: wave 1s infinite ease-in-out;
+            margin-left: 8px;
+            transform-origin: 70% 70%;
+            font-size: 1.3em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white p-4">
+            <div class="flex items-center space-x-2 mb-8">
+                <i class="fas fa-utensils text-2xl"></i>
+                <h1 class="text-xl font-bold">KLORIVA CRM</h1>
+            </div>
+            <nav>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="profilsaya.html"
+                            class="flex items-center space-x-2 p-2 rounded hover:bg-green-700 text-white">
+                            <i class="fas fa-user w-5"></i>
+                            <span>Profil Saya</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="riwayatpesanan.html"
+                            class="flex items-center space-x-2 p-2 rounded hover:bg-green-700 text-white">
+                            <i class="fas fa-history w-5"></i>
+                            <span>Riwayat Pesanan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="programloyality.html"
+                            class="flex items-center space-x-2 p-2 rounded hover:bg-green-700 text-white">
+                            <i class="fas fa-star w-5"></i>
+                            <span>Program Loyalty</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="ulasan.html"
+                            class="flex items-center space-x-2 p-2 rounded hover:bg-green-700 text-white">
+                            <i class="fas fa-comment w-5"></i>
+                            <span>Ulasan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button id="logoutBtn"
+                            class="w-full flex items-center space-x-2 p-2 rounded hover:bg-green-700 text-white text-left">
+                            <i class="fas fa-sign-out-alt w-5"></i>
+                            <span>Keluar</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">Dashboard Pelanggan</h2>
+                <div id="customerGreeting" class="greeting-text"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Profile Card -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
+                            <i class="fas fa-user text-2xl text-gray-500"></i>
+                        </div>
+                        <div>
+                            <h3 id="customerName" class="font-bold text-lg"></h3>
+                            <p id="customerEmail" class="text-gray-600 text-sm"></p>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <p><i class="fas fa-phone mr-2 text-gray-500"></i> <span id="customerPhone"></span></p>
+                        <p><i class="fas fa-calendar-alt mr-2 text-gray-500"></i> Member sejak: <span
+                                id="joinDate"></span></p>
+                    </div>
+                </div>
+
+                <!-- Loyalty Card -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="font-bold text-lg mb-4">Program Loyalty</h3>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-600">Poin Anda:</span>
+                        <span id="loyaltyPoints" class="font-bold text-green-600"></span>
+                    </div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-gray-600">Tier:</span>
+                        <span id="loyaltyTier"
+                            class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800"></span>
+                    </div>
+                    <button class="w-full btn-primary text-white py-2 px-4 rounded-md text-sm">
+                        Lihat Hadiah
+                    </button>
+                </div>
+
+                <!-- Order Stats -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="font-bold text-lg mb-4">Statistik Pesanan</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-gray-600">Total Pesanan</p>
+                            <p id="totalOrders" class="text-2xl font-bold">0</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Pesanan Terakhir</p>
+                            <p id="lastOrder" class="text-sm">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Card -->
+            <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow dashboard-card" style="--order: 4">
+                <a href="riwayatpesanan.html" class="block">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-lg">Pesanan Terakhir</h3>
+                        <span class="text-sm text-green-600 flex items-center">
+                            Lihat Semua <i class="fas fa-chevron-right ml-1"></i>
+                        </span>
+                    </div>
+                    <div id="orderHistory" class="text-center text-gray-500">
+                        <i class="fas fa-shopping-bag text-4xl mb-2"></i>
+                        <p>Belum ada riwayat pesanan</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Quick Access Card -->
+            <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+                <a href="riwayatpesanan.html" class="block">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-history text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">Riwayat Pesanan</h3>
+                            <p class="text-sm text-gray-500">Lihat semua transaksi Anda</p>
+                        </div>
+                        <div class="ml-auto text-green-600">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Load Animations -->
+    <script src="js/animations.js"></script>
+    
+    <script>
+        // Check if user is logged in
+        const currentCustomer = JSON.parse(localStorage.getItem('currentCustomer'));
+        if (!currentCustomer) {
+            window.location.href = 'index.html';
+        }
+
+        // Load customer data
+        document.getElementById('customerName').textContent = currentCustomer.name;
+        document.getElementById('customerEmail').textContent = currentCustomer.email;
+        document.getElementById('customerPhone').textContent = currentCustomer.phone;
+        // Enhanced animated greeting
+        const greetingElement = document.getElementById('customerGreeting');
+        const name = currentCustomer.name;
+
+        // Initial setup
+        greetingElement.innerHTML = 'Halo, <span class="name-text"></span>';
+        const nameElement = greetingElement.querySelector('.name-text');
+
+        let i = 0;
+        const typingSpeed = 120; // ms per character
+        const initialDelay = 500; // ms
+
+        function typeWriter() {
+            if (i < name.length) {
+                nameElement.textContent = name.substring(0, i + 1);
+                i++;
+                setTimeout(typeWriter, typingSpeed);
+            } else {
+                // Add wave emoji after typing completes
+                const emoji = document.createElement('span');
+                emoji.className = 'wave-emoji';
+                emoji.textContent = ' 👋';
+                greetingElement.appendChild(emoji);
+
+                // Add exclamation mark after name
+                const exclamation = document.createTextNode('!');
+                greetingElement.insertBefore(exclamation, emoji);
+            }
+        }
+
+        // Start animation after initial delay
+        setTimeout(typeWriter, initialDelay);
+
+        const joinDate = new Date(currentCustomer.createdAt);
+        document.getElementById('joinDate').textContent = joinDate.toLocaleDateString('id-ID');
+
+        document.getElementById('loyaltyPoints').textContent = currentCustomer.loyalty.points;
+        document.getElementById('loyaltyTier').textContent = currentCustomer.loyalty.tier;
+        document.getElementById('totalOrders').textContent = currentCustomer.orders.length;
+
+        if (currentCustomer.orders.length > 0) {
+            const lastOrder = currentCustomer.orders[currentCustomer.orders.length - 1];
+            document.getElementById('lastOrder').textContent =
+                `${new Date(lastOrder.date).toLocaleDateString('id-ID')} - Rp${lastOrder.total.toLocaleString('id-ID')}`;
+
+            // Display order history
+            const orderHistoryDiv = document.getElementById('orderHistory');
+            orderHistoryDiv.innerHTML = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Pesanan</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        ${currentCustomer.orders.map(order => `
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.id}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(order.date).toLocaleDateString('id-ID')}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">${order.items.join(', ')}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp${order.total.toLocaleString('id-ID')}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Navigation function
+        function navigateTo(page) {
+            localStorage.setItem('currentPage', page);
+            window.location.href = `${page}.html`;
+        }
+
+        // Enhanced Logout function
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            // Clear all customer data
+            localStorage.removeItem('customers');
+            localStorage.removeItem('currentCustomer');
+            localStorage.removeItem('currentPage');
+            
+            // Show logout confirmation
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                // Redirect to login page
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Initialize navigation
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('href').replace('.html', '');
+                    navigateTo(page);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
